@@ -7,6 +7,11 @@ const UserSchema = new mongoose.Schema(
     firstName: String,
     lastName: String,
     image: String,
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      default: "other",
+    },
   },
   { timestamps: true }
 );

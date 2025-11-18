@@ -32,7 +32,6 @@ router.post(
       let event;
 
       try {
-        // Verify event signature
         event = svix.verify(req.body, {
           "svix-id": svix_id,
           "svix-timestamp": svix_timestamp,
@@ -44,12 +43,13 @@ router.post(
 
       const { data, type } = event;
 
+      const email = data.email_addresses?.[0]?.email_address || null;
+      const gender = data.public_metadata?.gender || null; // 🔥 GET GENDER FROM CLERK
+
       //
-      // 🎉 USER CREATED IN CLERK
+      // 🎉 USER CREATED
       //
       if (type === "user.created") {
-        const email = data.email_addresses[0]?.email_address;
-
         const exists = await User.findOne({ clerkId: data.id });
 
         if (!exists) {
@@ -59,16 +59,15 @@ router.post(
             firstName: data.first_name,
             lastName: data.last_name,
             image: data.image_url,
+            gender, // 🔥 SAVE GENDER
           });
         }
       }
 
       //
-      // 📝 USER UPDATED IN CLERK
+      // 📝 USER UPDATED
       //
       if (type === "user.updated") {
-        const email = data.email_addresses[0]?.email_address;
-
         await User.findOneAndUpdate(
           { clerkId: data.id },
           {
@@ -76,13 +75,14 @@ router.post(
             firstName: data.first_name,
             lastName: data.last_name,
             image: data.image_url,
+            gender, // 🔥 UPDATE GENDER
           },
           { new: true }
         );
       }
 
       //
-      // 🗑 USER DELETED IN CLERK
+      // 🗑 USER DELETED
       //
       if (type === "user.deleted") {
         await User.findOneAndDelete({ clerkId: data.id });
