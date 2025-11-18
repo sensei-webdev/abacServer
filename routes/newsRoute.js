@@ -12,7 +12,7 @@ import {
 const NewsRoute = express.Router();
 
 NewsRoute.post("/news", create);
-NewsRoute.get("/news", getAllNews);
+NewsRoute.get("/news/all", getAllNews);
 NewsRoute.get("/news/count", getNewsCount);
 NewsRoute.get("/news/:id", getNewsById);
 NewsRoute.put("/update/news/:id", update);
