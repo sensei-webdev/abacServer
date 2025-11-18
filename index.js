@@ -25,7 +25,7 @@ app.use("/api/clerk", clerkWebhookRoute);
 app.use(bodyParser.json());
 
 // Your normal API routes
-app.use("/api", route);
+app.use("/api", route); //students or userapi
 app.use("/courseapi", courseRoute);
 app.use("/newsapi", NewsRoute);
 
