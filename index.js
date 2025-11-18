@@ -1,12 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
-import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import route from "./routes/userRoute.js";
 import courseRoute from "./routes/coursesRoute.js";
 import cors from "cors";
 import NewsRoute from "./routes/newsRoute.js";
 import clerkWebhookRoute from "./routes/clerkWebhookRoute.js";
+import BlogRoute from "./routes/blogRoute.js";
 
 dotenv.config();
 
@@ -16,18 +16,17 @@ const MONGOURL = process.env.MONGO_URL;
 
 app.use(cors());
 
-// ⚠️ IMPORTANT:
-// Clerk Webhook MUST be BEFORE bodyParser/json
-// and MUST NOT use express.json() or bodyParser.json()
+// Normal JSON parser
+app.use(express.json());
+
+// Clerk Webhook FIRST (no JSON parsing)
 app.use("/api/clerk", clerkWebhookRoute);
 
-// Normal JSON parser for all other routes
-app.use(bodyParser.json());
-
-// Your normal API routes
-app.use("/api", route); //students or userapi
+// Your API routes
+app.use("/api", route);
 app.use("/courseapi", courseRoute);
 app.use("/newsapi", NewsRoute);
+app.use("/blogapi", BlogRoute);
 
 mongoose
   .connect(MONGOURL)
